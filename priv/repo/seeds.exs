@@ -11,18 +11,13 @@
 # and so on) as they will fail if something goes wrong.
 
 alias Zmeio.Accounts.Account
-alias Zmeio.Edibles
-alias Zmeio.Edibles.Edible
-alias Zmeio.EdibleTypes
-alias Zmeio.EdibleTypes.EdibleType
-alias Zmeio.Orders
-alias Zmeio.Orders.Order
-alias Zmeio.OrderItems
-alias Zmeio.OrderItems.OrderItem
-alias Zmeio.Recipes
-alias Zmeio.Recipes.Recipe
-alias Zmeio.RecipeItems
-alias Zmeio.RecipeItems.RecipeItem
+alias Zmeio.Store
+alias Zmeio.Store.Edible
+alias Zmeio.Store.EdibleType
+alias Zmeio.Store.Order
+alias Zmeio.Store.OrderItem
+alias Zmeio.Store.Recipe
+alias Zmeio.Store.RecipeItem
 alias Zmeio.Repo
 
 defmodule Zmeio.Seed do
@@ -73,15 +68,15 @@ defmodule Zmeio.Seed do
   def recipes() do
     first_recipe = %Recipe{name: "WorldWind"} |> Repo.insert!()
     [
-      %RecipeItem{edible: Edibles.get_by_name("cashew"), recipe: first_recipe, batches: 1},
-      %RecipeItem{edible: Edibles.get_by_name("pistachio"), recipe: first_recipe, batches: 1},
-      %RecipeItem{edible: Edibles.get_by_name("rolled"), recipe: first_recipe, batches: 4},
+      %RecipeItem{edible: Store.get_edible_by_name("cashew"), recipe: first_recipe, batches: 1},
+      %RecipeItem{edible: Store.get_edible_by_name("pistachio"), recipe: first_recipe, batches: 1},
+      %RecipeItem{edible: Store.get_edible_by_name("rolled"), recipe: first_recipe, batches: 4},
     ]
     |> Enum.each(fn item -> Repo.insert(item) end)
   end
 
   def orders() do
-    first_recipe = Recipes.get_by_name("WorldWind")
+    first_recipe = Store.get_recipe_by_name("WorldWind")
     first_order = %Order{} |> Repo.insert!()
     [
       %OrderItem{recipe: first_recipe, order: first_order, amount: 3}

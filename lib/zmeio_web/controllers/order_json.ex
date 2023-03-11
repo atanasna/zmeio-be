@@ -1,5 +1,5 @@
 defmodule ZmeioWeb.OrderJSON do
-  alias Zmeio.Orders.Order
+  alias Zmeio.Store.Order
 
   @doc """
   Renders a list of orders.

@@ -1,5 +1,5 @@
 defmodule ZmeioWeb.EdibleTypeJSON do
-  alias Zmeio.EdibleTypes.EdibleType
+  alias Zmeio.Store.EdibleType
 
   @doc """
   Renders a list of edible_types.

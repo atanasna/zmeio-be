@@ -1,4 +1,4 @@
-defmodule Zmeio.Edibles.Edible do
+defmodule Zmeio.Store.Edible do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -14,8 +14,8 @@ defmodule Zmeio.Edibles.Edible do
     field :stock, :float
     field :batch_weight, :float
     field :batch_price, :float
-    belongs_to :edible_type, Zmeio.EdibleTypes.EdibleType
-    has_many :recipe_items, Zmeio.RecipeItems.RecipeItem
+    belongs_to :edible_type, Zmeio.Store.EdibleType
+    has_many :recipe_items, Zmeio.Store.RecipeItem
 
     timestamps()
   end

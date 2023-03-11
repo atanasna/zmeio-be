@@ -1,14 +1,15 @@
-defmodule Zmeio.RecipeItems.RecipeItem do
+defmodule Zmeio.Store.RecipeItem do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Zmeio.Edibles
+  alias Zmeio.Store
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "recipe_items" do
     field :batches, :integer
-    belongs_to :edible, Zmeio.Edibles.Edible
-    belongs_to :recipe, Zmeio.Recipes.Recipe
+    belongs_to :edible, Zmeio.Store.Edible
+    belongs_to :recipe, Zmeio.Store.Recipe
 
     timestamps()
   end
@@ -22,7 +23,7 @@ defmodule Zmeio.RecipeItems.RecipeItem do
 
   # -- Custom
   def price(item) do
-    edible = Edibles.get_edible!(item.edible_id)
+    edible = Store.get_edible!(item.edible_id)
     edible.batch_price * item.batches
   end
 end

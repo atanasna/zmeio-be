@@ -1,4 +1,4 @@
-defmodule Zmeio.EdibleTypes.EdibleType do
+defmodule Zmeio.Store.EdibleType do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,7 +6,7 @@ defmodule Zmeio.EdibleTypes.EdibleType do
   @foreign_key_type :binary_id
   schema "edible_types" do
     field :name, :string
-    has_many :edibles, Zmeio.Edibles.Edible
+    has_many :edibles, Zmeio.Store.Edible
 
     timestamps()
   end

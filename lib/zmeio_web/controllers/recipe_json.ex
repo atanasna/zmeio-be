@@ -1,5 +1,5 @@
 defmodule ZmeioWeb.RecipeJSON do
-  alias Zmeio.Recipes.Recipe
+  alias Zmeio.Store.Recipe
 
   @doc """
   Renders a list of recipe.

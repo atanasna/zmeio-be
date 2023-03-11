@@ -22,6 +22,9 @@ defmodule ZmeioWeb.AccountController do
     end
   end
 
+  def login(conn) do
+  end
+
   def show(conn, %{"id" => id}) do
     account = Accounts.get_account!(id)
     render(conn, :show, account: account)

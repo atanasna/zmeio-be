@@ -1,18 +1,18 @@
-defmodule Zmeio.Recipes.Recipe do
+defmodule Zmeio.Store.Recipe do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
 
   alias Zmeio.Repo
-  alias Zmeio.RecipeItems.RecipeItem
+  alias Zmeio.Store.RecipeItem
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "recipes" do
     field :name, :string
     belongs_to :account, Zmeio.Accounts.Account
-    has_many :recipe_items, Zmeio.RecipeItems.RecipeItem
-    has_many :order_items, Zmeio.OrderItems.OrderItem
+    has_many :recipe_items, Zmeio.Store.RecipeItem
+    has_many :order_items, Zmeio.Store.OrderItem
 
     timestamps()
   end
