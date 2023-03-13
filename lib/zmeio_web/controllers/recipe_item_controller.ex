@@ -15,7 +15,7 @@ defmodule ZmeioWeb.RecipeItemController do
     with {:ok, %RecipeItem{} = recipe_item} <- Store.create_recipe_item(recipe_item_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/recipe_item/#{recipe_item}")
+      |> put_resp_header("location", ~p"/api/recipe_items/#{recipe_item}")
       |> render(:show, recipe_item: recipe_item)
     end
   end

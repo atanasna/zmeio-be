@@ -3,7 +3,7 @@ defmodule ZmeioWeb.OrderControllerTest do
 
   import Zmeio.OrdersFixtures
 
-  alias Zmeio.Orders.Order
+  alias Zmeio.Store.Order
 
   @create_attrs %{
     price: 120.5

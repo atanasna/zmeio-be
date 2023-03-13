@@ -1,4 +1,4 @@
-defmodule Zmeio.StoreTest do
+defmodule Zmeio.RecipeItemsTest do
   use Zmeio.DataCase
 
   alias Zmeio.Store

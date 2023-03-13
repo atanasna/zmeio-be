@@ -23,9 +23,24 @@ defmodule ZmeioWeb.Router do
     get "/edibles", EdibleController, :index
     get "/edibles/:id", EdibleController, :show
     post "/edibles", EdibleController, :create
-    #get "/edibles", EdibleController, :index
     put "/edibles/:id", EdibleController, :update
     delete "/edibles/:id", EdibleController, :delete
+
+    get "/edible_types", EdibleTypeController, :index
+    get "/edible_types/:id", EdibleTypeController, :show
+    post "/edible_types", EdibleTypeController, :create
+    put "/edible_types/:id", EdibleTypeController, :update
+    delete "/edible_types/:id", EdibleTypeController, :delete
+
+    get "/orders", OrderController, :index
+    get "/orders/:id", OrderController, :show
+    post "/orders", OrderController, :create
+    put "/orders/:id", OrderController, :update
+    delete "/orders/:id", OrderController, :delete
+
+    resources "/order_items", OrderItemController, except: [:edit, :new]
+    resources "/recipes", RecipeController, except: [:edit, :new]
+    resources "/recipe_items", RecipeItemController, except: [:edit, :new]
     #post "/auth/signin", AccountController, :signin
     #post "/auth/signin", AccountController, :signin
   end
