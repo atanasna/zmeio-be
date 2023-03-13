@@ -23,7 +23,7 @@ defmodule Zmeio.Store.Edible do
   @doc false
   def changeset(edible, attrs) do
     edible
-    |> cast(attrs, [:name, :calories, :fat, :protein, :carbs, :fiber, :stock])
-    |> validate_required([:name, :calories, :fat, :protein, :carbs, :fiber, :stock])
+    |> cast(attrs, [:name, :calories, :fat, :protein, :carbs, :fiber, :stock, :batch_weight, :batch_price])
+    |> validate_required([:name, :calories, :fat, :protein, :carbs, :fiber, :stock, :batch_weight, :batch_price])
   end
 end

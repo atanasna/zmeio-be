@@ -20,8 +20,8 @@ defmodule Zmeio.Store.Recipe do
   @doc false
   def changeset(recipe, attrs) do
     recipe
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:name])
+    |> validate_required([:name])
   end
 
   # -- Custom

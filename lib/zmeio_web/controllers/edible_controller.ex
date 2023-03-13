@@ -22,12 +22,13 @@ defmodule ZmeioWeb.EdibleController do
 
   def show(conn, %{"id" => id}) do
     edible = Store.get_edible!(id)
+
     render(conn, :show, edible: edible)
   end
 
   def update(conn, %{"id" => id, "edible" => edible_params}) do
     edible = Store.get_edible!(id)
-
+    #IO.inspect(edible)
     with {:ok, %Edible{} = edible} <- Store.update_edible(edible, edible_params) do
       render(conn, :show, edible: edible)
     end

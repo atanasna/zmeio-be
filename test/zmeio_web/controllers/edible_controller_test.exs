@@ -3,27 +3,31 @@ defmodule ZmeioWeb.EdibleControllerTest do
 
   import Zmeio.EdiblesFixtures
 
-  alias Zmeio.Edibles.Edible
+  alias Zmeio.Store.Edible
 
   @create_attrs %{
-    calories: 42,
-    carbs: 42,
-    fat: 42,
-    fiber: 42,
+    calories: 42.0,
+    carbs: 42.0,
+    fat: 42.0,
+    fiber: 42.0,
     name: "some name",
-    protein: 42,
-    stock: 42
+    protein: 42.0,
+    stock: 42.0,
+    batch_price: 2.2,
+    batch_weight: 100.0
   }
   @update_attrs %{
-    calories: 43,
-    carbs: 43,
-    fat: 43,
-    fiber: 43,
+    calories: 43.0,
+    carbs: 43.0,
+    fat: 43.0,
+    fiber: 43.0,
     name: "some updated name",
-    protein: 43,
-    stock: 43
+    protein: 43.0,
+    stock: 43.0,
+    batch_price: 3.2,
+    batch_weight: 101.0,
   }
-  @invalid_attrs %{calories: nil, carbs: nil, fat: nil, fiber: nil, name: nil, protein: nil, stock: nil}
+  @invalid_attrs %{calories: nil, carbs: nil, fat: nil, fiber: nil, name: nil, protein: nil, stock: nil, batch_price: nil, batch_weight: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -45,13 +49,15 @@ defmodule ZmeioWeb.EdibleControllerTest do
 
       assert %{
                "id" => ^id,
-               "calories" => 42,
-               "carbs" => 42,
-               "fat" => 42,
-               "fiber" => 42,
+               "calories" => 42.0,
+               "carbs" => 42.0,
+               "fat" => 42.0,
+               "fiber" => 42.0,
                "name" => "some name",
-               "protein" => 42,
-               "stock" => 42
+               "protein" => 42.0,
+               "stock" => 42.0,
+               "batch_price" => 2.2,
+               "batch_weight" => 100.0,
              } = json_response(conn, 200)["data"]
     end
 
@@ -65,20 +71,28 @@ defmodule ZmeioWeb.EdibleControllerTest do
     setup [:create_edible]
 
     test "renders edible when data is valid", %{conn: conn, edible: %Edible{id: id} = edible} do
+      #IO.inspect(edible)
       conn = put(conn, ~p"/api/edibles/#{edible}", edible: @update_attrs)
+      #IO.inspect(@update_attrs)
+      #IO.inspect(json_response(conn, 200)["data"])
+      #IO.inspect(conn.resp_body)
+      #IO.inspect(json_response(conn, 200))
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
+
 
       conn = get(conn, ~p"/api/edibles/#{id}")
 
       assert %{
                "id" => ^id,
-               "calories" => 43,
-               "carbs" => 43,
-               "fat" => 43,
-               "fiber" => 43,
+               "calories" => 43.0,
+               "carbs" => 43.0,
+               "fat" => 43.0,
+               "fiber" => 43.0,
                "name" => "some updated name",
-               "protein" => 43,
-               "stock" => 43
+               "protein" => 43.0,
+               "stock" => 43.0,
+               "batch_price" => 3.2,
+               "batch_weight" => 101.0,
              } = json_response(conn, 200)["data"]
     end
 

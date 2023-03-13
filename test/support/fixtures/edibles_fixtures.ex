@@ -11,16 +11,17 @@ defmodule Zmeio.EdiblesFixtures do
     {:ok, edible} =
       attrs
       |> Enum.into(%{
-        calories: 42,
-        carbs: 42,
-        fat: 42,
-        fiber: 42,
+        calories: 42.0,
+        carbs: 42.0,
+        fat: 42.0,
+        fiber: 42.0,
         name: "some name",
-        protein: 42,
-        stock: 42
+        protein: 42.0,
+        stock: 42.0,
+        batch_weight: 100.0,
+        batch_price: 2.2
       })
-      |> Zmeio.Edibles.create_edible()
-
+      |> Zmeio.Store.create_edible()
     edible
   end
 end

@@ -1,6 +1,7 @@
 defmodule ZmeioWeb.AccountController do
   use ZmeioWeb, :controller
 
+  alias ZmeioWeb.Auth.{Guardian, Errors}
   alias Zmeio.Accounts
   alias Zmeio.Accounts.Account
 
@@ -11,18 +12,24 @@ defmodule ZmeioWeb.AccountController do
     render(conn, :index, accounts: accounts)
   end
 
-  def create(conn, %{"account" => account_params}) do
-    with {:ok, %Account{} = account} <- Accounts.create_account(account_params),
-      #{:ok, %User{} = user} <- Users.create_user(account_params),
-      {:ok, token, _claims} <- ZmeioWeb.Auth.Guardian.encode_and_sign(account)
+  def signup(conn, %{} = params) do
+    with {:ok, %Account{} = account} <- Accounts.create_account(params)
     do
       conn
       |> put_status(:created)
-      |> render(:show, account: account)
+      |> render(:signup, account: account)
     end
   end
 
-  def login(conn) do
+  def signin(conn, %{"email" => email, "password_hash" => password_hash}) do
+    with {:ok, %Account{} = account, token} <- Guardian.authenticate(email,password_hash)
+    do
+      conn
+      |> put_status(:ok)
+      |> render(:signin, account: account, token: token)
+    else
+      {:error, :unauthorized} -> raise Errors.Unauthorized, message: "Incorrect email/password "
+    end
   end
 
   def show(conn, %{"id" => id}) do

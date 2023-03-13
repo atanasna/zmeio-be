@@ -1,7 +1,7 @@
 defmodule Zmeio.OrderItemsFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Zmeio.OrderItems` context.
+  entities via the `Zmeio.Store` context.
   """
 
   @doc """
@@ -13,7 +13,7 @@ defmodule Zmeio.OrderItemsFixtures do
       |> Enum.into(%{
         amount: 42
       })
-      |> Zmeio.OrderItems.create_order_item()
+      |> Zmeio.Store.create_order_item()
 
     order_item
   end

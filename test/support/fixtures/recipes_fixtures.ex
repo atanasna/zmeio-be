@@ -11,9 +11,9 @@ defmodule Zmeio.RecipesFixtures do
     {:ok, recipe} =
       attrs
       |> Enum.into(%{
-
+        name: "some recipe name"
       })
-      |> Zmeio.Recipes.create_recipe()
+      |> Zmeio.Store.create_recipe()
 
     recipe
   end

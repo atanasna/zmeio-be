@@ -24,7 +24,9 @@ defmodule ZmeioWeb.EdibleJSON do
       protein: edible.protein,
       carbs: edible.carbs,
       fiber: edible.fiber,
-      stock: edible.stock
+      stock: edible.stock,
+      batch_price: edible.batch_price,
+      batch_weight: edible.batch_weight,
     }
   end
 end

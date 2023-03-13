@@ -22,4 +22,19 @@ defmodule ZmeioWeb.AccountJSON do
       password_hash: account.password_hash
     }
   end
+
+  def signup(%{account: account}) do
+    %{
+      id: account.id,
+      email: account.email
+    }
+  end
+
+  def signin(%{account: account, token: token}) do
+    %{
+      id: account.id,
+      email: account.email,
+      token: token
+    }
+  end
 end

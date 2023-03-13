@@ -18,7 +18,7 @@ defmodule ZmeioWeb.RecipeItemJSON do
   defp data(%RecipeItem{} = recipe_item) do
     %{
       id: recipe_item.id,
-      weight: recipe_item.weight
+      weight: recipe_item.batches
     }
   end
 end

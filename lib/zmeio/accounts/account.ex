@@ -8,8 +8,8 @@ defmodule Zmeio.Accounts.Account do
     field :email, :string
     field :password_hash, :string
     has_one :user, Zmeio.Users.User
-    has_many :orders, Zmeio.Orders.Order
-    has_many :recipes, Zmeio.Recipes.Recipe
+    has_many :orders, Zmeio.Store.Order
+    has_many :recipes, Zmeio.Store.Recipe
 
     timestamps()
   end

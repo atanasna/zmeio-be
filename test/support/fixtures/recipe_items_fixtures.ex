@@ -11,9 +11,9 @@ defmodule Zmeio.RecipeItemsFixtures do
     {:ok, recipe_item} =
       attrs
       |> Enum.into(%{
-        weight: 42
+        batches: 42
       })
-      |> Zmeio.RecipeItems.create_recipe_item()
+      |> Zmeio.Store.create_recipe_item()
 
     recipe_item
   end
