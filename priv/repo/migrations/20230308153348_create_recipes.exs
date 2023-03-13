@@ -5,11 +5,11 @@ defmodule Zmeio.Repo.Migrations.CreateRecipes do
     create table(:recipes, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string
-      add :account_id, references(:accounts, on_delete: :nothing, type: :binary_id)
+      add :user_id, references(:users, on_delete: :nothing, type: :binary_id)
 
       timestamps()
     end
 
-    create index(:recipes, [:account_id])
+    create index(:recipes, [:user_id])
   end
 end

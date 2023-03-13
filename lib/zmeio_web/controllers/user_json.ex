@@ -1,5 +1,5 @@
 defmodule ZmeioWeb.UserJSON do
-  alias Zmeio.Users.User
+  alias Zmeio.Auth.User
 
   @doc """
   Renders a list of users.

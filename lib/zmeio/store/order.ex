@@ -8,9 +8,10 @@ defmodule Zmeio.Store.Order do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+
   schema "orders" do
     field :price, :float
-    belongs_to :account, Zmeio.Accounts.Account
+    belongs_to :user, Zmeio.Auth.User
     has_many :order_items, Zmeio.Store.OrderItem
 
     timestamps()

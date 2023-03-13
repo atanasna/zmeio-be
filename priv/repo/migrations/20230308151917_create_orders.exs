@@ -5,11 +5,11 @@ defmodule Zmeio.Repo.Migrations.CreateOrders do
     create table(:orders, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :price, :float
-      add :account_id, references(:accounts, on_delete: :delete_all, type: :binary_id)
+      add :user_id, references(:users, on_delete: :delete_all, type: :binary_id)
 
       timestamps()
     end
 
-    create index(:orders, [:account_id])
+    create index(:orders, [:user_id])
   end
 end

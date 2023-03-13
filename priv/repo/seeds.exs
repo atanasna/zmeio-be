@@ -10,7 +10,7 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias Zmeio.Accounts.Account
+#alias Zmeio.Auth.User
 alias Zmeio.Store
 alias Zmeio.Store.Edible
 alias Zmeio.Store.EdibleType
