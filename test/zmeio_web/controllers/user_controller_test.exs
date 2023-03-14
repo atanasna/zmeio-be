@@ -3,7 +3,7 @@ defmodule ZmeioWeb.UserControllerTest do
 
   import Zmeio.UsersFixtures
 
-  alias Zmeio.Users.User
+  alias Zmeio.Identity.User
 
   #@create_attrs %{
   #  full_name: "some full_name"

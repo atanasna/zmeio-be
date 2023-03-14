@@ -11,9 +11,12 @@ defmodule Zmeio.UsersFixtures do
     {:ok, user} =
       attrs
       |> Enum.into(%{
-        full_name: "some full_name"
+        first_name: "John",
+        last_name: "Doe",
+        email: "jd@google.com",
+        provider: "google"
       })
-      |> Zmeio.Users.create_user()
+      |> Zmeio.Identity.create_user()
 
     user
   end

@@ -1,5 +1,5 @@
 defmodule ZmeioWeb.UserJSON do
-  alias Zmeio.Auth.User
+  alias Zmeio.Identity.User
 
   @doc """
   Renders a list of users.
@@ -18,7 +18,11 @@ defmodule ZmeioWeb.UserJSON do
   defp data(%User{} = user) do
     %{
       id: user.id,
-      full_name: user.full_name
+      first_name: user.first_name,
+      last_name: user.last_name,
+      token: user.token,
+      provider: user.provider,
+      picture: user.picture,
     }
   end
 end

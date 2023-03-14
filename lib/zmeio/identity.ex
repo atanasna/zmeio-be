@@ -1,4 +1,4 @@
-defmodule Zmeio.Auth do
+defmodule Zmeio.Identity do
   @moduledoc """
   The Accounts context.
   """
@@ -6,7 +6,7 @@ defmodule Zmeio.Auth do
   import Ecto.Query, warn: false
   alias Zmeio.Repo
 
-  alias Zmeio.Auth.User
+  alias Zmeio.Identity.User
 
   @doc """
   Returns the list of users.

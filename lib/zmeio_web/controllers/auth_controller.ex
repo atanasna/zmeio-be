@@ -1,8 +1,8 @@
-defmodule ZmeioWeb.SessionController do
+defmodule ZmeioWeb.AuthController do
   use ZmeioWeb, :controller
-  plug Ueberauth
+  #plug Ueberauth
 
-  alias Zmeio.Auth.User
+  alias Zmeio.Identity.User
 
   def create(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
     user_params = %{

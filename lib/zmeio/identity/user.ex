@@ -1,4 +1,4 @@
-defmodule Zmeio.Auth.User do
+defmodule Zmeio.Identity.User do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -10,6 +10,7 @@ defmodule Zmeio.Auth.User do
     field :first_name, :string
     field :last_name, :string
     field :provider, :string
+    field :token, :string
     field :picture, :string
     has_many :orders, Zmeio.Store.Order
     has_many :recipes, Zmeio.Store.Recipe
@@ -20,7 +21,7 @@ defmodule Zmeio.Auth.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :first_name, :last_name, :provider, :picture])
+    |> cast(attrs, [:email, :first_name, :last_name, :provider, :token, :picture])
     |> validate_required([:email, :provider])
     |> validate_format(:email, ~r/^\S+@\S+$/, message: "must be an email")
     |> validate_length(:email, max: 160)
