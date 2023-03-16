@@ -27,7 +27,17 @@ defmodule ZmeioWeb.EdibleControllerTest do
     batch_price: 3.2,
     batch_weight: 101.0,
   }
-  @invalid_attrs %{calories: nil, carbs: nil, fat: nil, fiber: nil, name: nil, protein: nil, stock: nil, batch_price: nil, batch_weight: nil}
+  @invalid_attrs %{
+    calories: nil,
+    carbs: nil,
+    fat: nil,
+    fiber: nil,
+    name: nil,
+    protein: nil,
+    stock: nil,
+    batch_price: nil,
+    batch_weight: nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

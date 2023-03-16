@@ -14,18 +14,20 @@ defmodule ZmeioWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/auth", ZmeioWeb do
-    #pipe_through :browser
-
-    get "/:provider", AuthController, :request
-    get "/:provider/callback", AuthController, :create
-  end
+  #scope "/auth", ZmeioWeb do
+  #  #pipe_through :browser
+  #  pipe_through :api
+  #  get "/:provider", AuthController, :request
+  #  get "/:provider/callback", AuthController, :create
+  #end
 
   scope "/api", ZmeioWeb do
     pipe_through :api
     get "/", DefaultController, :index
-    #post "/auth/signup", AccountController, :signup
-    #post "/auth/signin", AccountController, :signin
+
+    post "/auth/local/login", AuthController, :login
+    post "/auth/local/register", AuthController, :register
+    post "/auth/:provider/login", AuthController, :oauth
 
     get "/edibles", EdibleController, :index
     get "/edibles/:id", EdibleController, :show

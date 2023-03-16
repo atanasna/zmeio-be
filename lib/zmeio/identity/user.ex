@@ -7,11 +7,12 @@ defmodule Zmeio.Identity.User do
 
   schema "users" do
     field :email, :string
+    field :password_hash, :string
     field :first_name, :string
     field :last_name, :string
     field :provider, :string
     field :token, :string
-    field :picture, :string
+    field :avatar, :string
     has_many :orders, Zmeio.Store.Order
     has_many :recipes, Zmeio.Store.Recipe
 
@@ -21,10 +22,11 @@ defmodule Zmeio.Identity.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :first_name, :last_name, :provider, :token, :picture])
+    |> cast(attrs, [:email, :password_hash, :first_name, :last_name, :provider, :token, :avatar])
     |> validate_required([:email, :provider])
     |> validate_format(:email, ~r/^\S+@\S+$/, message: "must be an email")
     |> validate_length(:email, max: 160)
     |> unique_constraint(:email)
   end
+
 end
