@@ -21,13 +21,6 @@ defmodule ZmeioWeb.AuthControllerTest do
       password: "alabala"
     }
 
-    @register_invalid_attrs %{
-      email: "jdoe",
-      first_name: "John",
-      last_name: "Doe",
-      password: "alabala"
-    }
-
     test "from valid email and pass", %{conn: conn} do
       conn = post(conn, ~p"/api/auth/local/register", @register_valid_attrs)
       resp = json_response(conn, 201)["user"]
@@ -39,11 +32,19 @@ defmodule ZmeioWeb.AuthControllerTest do
     end
 
     test "from invalid email and pass", %{conn: conn} do
-      IO.inspect(@register_invalid_attrs)
-      conn = post(conn, ~p"/api/auth/local/register", @register_invalid_attrs)
-      IO.inspect(conn)
-      resp = json_response(conn, 201)
-      IO.inspect resp
+      register_invalid_attrs = %{
+        email: "jdoe",
+        first_name: "John",
+        last_name: "Doe",
+        password: "alabala"
+      }
+
+      IO.inspect(register_invalid_attrs)
+      conn = post(conn, ~p"/api/auth/local/register", register_invalid_attrs)
+      assert json_response(conn, 401)["errors"] != %{}
+      #IO.inspect(conn)
+      #resp = json_response(conn, 201)
+      #IO.inspect resp
 
     end
   end

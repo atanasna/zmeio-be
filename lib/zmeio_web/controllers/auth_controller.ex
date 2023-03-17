@@ -46,21 +46,17 @@ defmodule ZmeioWeb.AuthController do
   end
 
   def register(conn, params) do
-    user_params = %{
-      first_name: params["first_name"],
-      last_name: params["last_name"],
-      email: params["email"],
-      password_hash: Bcrypt.hash_pwd_salt(params["password"]),
-      provider: "local"
-    }
+    user_params = params
+    |> Map.put("password_hash", Bcrypt.hash_pwd_salt(params["password"]))
+    |> Map.put("provider", "local")
 
     with {:ok, %User{} = user} <- Identity.create_user(user_params) do
       conn
       |> put_status(:created)
       |> render(:show, user: user)
     else
-      {:error, %Ecto.Changeset{errors: errors}} -> raise ZmeioWeb.Auth.Errors.WrongParameters, message: "wrong parameters"
-      {:error, _} -> raise ZmeioWeb.Auth.Errors.Generic, message: "something went wrong"
+      {:error, %Ecto.Changeset{} = cs} -> conn |> put_status(422) |> render(ZmeioWeb.ErrorJSON, :ecto, %{changeset: cs})
+      {:error, _} -> conn |> put_status(500) |> render(ZmeioWeb.ErrorJSON, :generic, %{message: "Something went wrong"})
     end
   end
 

@@ -24,8 +24,8 @@ defmodule Zmeio.Identity.User do
     user
     |> cast(attrs, [:email, :password_hash, :first_name, :last_name, :provider, :token, :avatar])
     |> validate_required([:email, :provider])
-    |> validate_format(:email, ~r/^\S+@\S+$/, message: "must be an email")
-    |> validate_length(:email, max: 160)
+    |> validate_format(:email, ~r/^\S+@\S+$/, message: "must be a valid email address")
+    |> validate_length(:email, max: 160, message: "must be less than 160 characters long")
     |> unique_constraint(:email)
   end
 

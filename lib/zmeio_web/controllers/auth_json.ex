@@ -13,13 +13,11 @@ defmodule ZmeioWeb.AuthJSON do
   Renders a single user.
   """
   def show(%{user: user}) do
-    %{status: :ok, user: data(user)}
+    data(user)
   end
 
-  def error(%{messages: errors}) do
-    #%{status: :error, messages: errors}
-    IO.inspect(errors)
-    %{status: :error, messages: errors}
+  def error(%{changeset: changeset}) do
+    %{errors: JaSerializer.EctoErrorSerializer.format(changeset)["errors"]}
   end
 
   defp data(%User{} = user) do

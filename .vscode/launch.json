@@ -6,8 +6,15 @@
     "configurations": [
         {
             "type": "mix_task",
-            "name": "mix (Default task)",
+            "name": "Attach to process",
             "request": "launch",
+            "processId": "${command.PickProcess}"
+        },
+        {
+            "type": "mix_task",
+            "name": "phoenix",
+            "request": "launch",
+            "task": "phx.server",
             "projectDir": "${workspaceRoot}"
         },
         {

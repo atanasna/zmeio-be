@@ -12,4 +12,13 @@ defmodule ZmeioWeb.ErrorJSON do
   def render(template, _assigns) do
     %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
   end
+
+  def ecto(%{changeset: changeset}) do
+    %{errors: JaSerializer.EctoErrorSerializer.format(changeset)["errors"]}
+  end
+
+  def generic(%{message: message}) do
+    %{errors: [message]}
+  end
+
 end
