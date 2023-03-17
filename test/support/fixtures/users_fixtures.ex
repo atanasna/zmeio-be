@@ -13,8 +13,9 @@ defmodule Zmeio.UsersFixtures do
       |> Enum.into(%{
         first_name: "John",
         last_name: "Doe",
-        email: "jd@google.com",
-        provider: "google"
+        email: "jd@gmail.com",
+        password: "pass",
+        provider: "local"
       })
       |> Zmeio.Identity.create_user()
 

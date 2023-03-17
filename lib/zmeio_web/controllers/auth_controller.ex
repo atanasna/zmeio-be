@@ -40,8 +40,14 @@ defmodule ZmeioWeb.AuthController do
     with {:ok, user, token} <- Guardian.authenticate(params["email"], params["password"]) do
       render(conn, :show, user: Map.put(user, :token, token))
     else
-      {:error, :unauthorized} -> raise ZmeioWeb.Auth.Errors.Unauthorized, message: "email or password is wrong"
-      {:error, _} -> raise ZmeioWeb.Auth.Errors.Generic, message: "something went wrong"
+      {:error, :unauthorized} ->
+        conn
+        |> put_status(:unauthorized)
+        |> render(ZmeioWeb.ErrorJSON, :generic, %{message: "email or password is wrong"})
+      {:error, _} ->
+        conn
+        |> put_status(500)
+        |> render(ZmeioWeb.ErrorJSON, :generic, %{message: "Something went wrong"})
     end
   end
 
@@ -55,8 +61,14 @@ defmodule ZmeioWeb.AuthController do
       |> put_status(:created)
       |> render(:show, user: user)
     else
-      {:error, %Ecto.Changeset{} = cs} -> conn |> put_status(422) |> render(ZmeioWeb.ErrorJSON, :ecto, %{changeset: cs})
-      {:error, _} -> conn |> put_status(500) |> render(ZmeioWeb.ErrorJSON, :generic, %{message: "Something went wrong"})
+      {:error, %Ecto.Changeset{} = cs} ->
+        conn
+        |> put_status(422)
+        |> render(ZmeioWeb.ErrorJSON, :ecto, %{changeset: cs})
+      {:error, _} ->
+        conn
+        |> put_status(500)
+        |> render(ZmeioWeb.ErrorJSON, :generic, %{message: "Something went wrong"})
     end
   end
 
