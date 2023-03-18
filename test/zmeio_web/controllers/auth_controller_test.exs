@@ -1,6 +1,8 @@
 defmodule ZmeioWeb.AuthControllerTest do
   use ZmeioWeb.ConnCase
 
+  import Zmeio.UsersFixtures
+
   alias Zmeio.Repo
   alias Zmeio.Identity.User
 
@@ -36,6 +38,7 @@ defmodule ZmeioWeb.AuthControllerTest do
     end
 
     test "with invalid inputs", %{conn: conn} do
+
       register_invalid_attrs = %{
         email: "jdoe",
         first_name: "John",
@@ -49,15 +52,17 @@ defmodule ZmeioWeb.AuthControllerTest do
   end
 
   describe "local user login" do
+    setup [:create_user]
+
     test "with valid credentials", %{conn: conn} do
-      %{
-        first_name: "John",
-        last_name: "Doe",
-        email: "jd@gmail.com",
-        password_hash: Bcrypt.hash_pwd_salt("pass"),
-        provider: "local"
-      }
-      |> Zmeio.Identity.create_user()
+      #%{
+      #  first_name: "John",
+      #  last_name: "Doe",
+      #  email: "jd@gmail.com",
+      #  password_hash: Bcrypt.hash_pwd_salt("pass"),
+      #  provider: "local"
+      #}
+      #|> Zmeio.Identity.create_user()
 
       conn = post(conn, ~p"/api/auth/local/login", %{email: "jd@gmail.com", password: "pass"})
       resp = json_response(conn, 200)
@@ -67,6 +72,7 @@ defmodule ZmeioWeb.AuthControllerTest do
     end
 
     test "with invalid credentials", %{conn: conn} do
+      #user = Zmeio.UsersFixtures.user_fixture()
       %{
         first_name: "John",
         last_name: "Doe",
@@ -105,4 +111,9 @@ defmodule ZmeioWeb.AuthControllerTest do
   #    #assert get_flash(conn, :info) == "Thank you for signing in!"
   #  end
   #end
+
+  defp create_user(_) do
+    user = user_fixture()
+    %{user: user}
+  end
 end

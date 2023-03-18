@@ -14,11 +14,10 @@ defmodule Zmeio.UsersFixtures do
         first_name: "John",
         last_name: "Doe",
         email: "jd@gmail.com",
-        password: "pass",
+        password_hash: Bcrypt.hash_pwd_salt("pass"),
         provider: "local"
       })
       |> Zmeio.Identity.create_user()
-
     user
   end
 end
