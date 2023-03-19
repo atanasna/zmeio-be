@@ -3,18 +3,6 @@ defmodule ZmeioWeb.AuthControllerTest do
 
   import Zmeio.UsersFixtures
 
-  alias Zmeio.Repo
-  alias Zmeio.Identity.User
-
-  @ueberauth_auth %{
-    credentials: %{token: "fdsnoafhnoofh08h38h"},
-    info: %{
-      email: "ironman@example.com",
-      first_name: "Tony",
-      last_name: "Stark"},
-    provider: "google"
-  }
-
   describe "local user registration" do
     test "with valid inputs", %{conn: conn} do
       pre_user_count = Zmeio.Identity.list_users |> Enum.count()
@@ -38,7 +26,6 @@ defmodule ZmeioWeb.AuthControllerTest do
     end
 
     test "with invalid inputs", %{conn: conn} do
-
       register_invalid_attrs = %{
         email: "jdoe",
         first_name: "John",
@@ -55,15 +42,6 @@ defmodule ZmeioWeb.AuthControllerTest do
     setup [:create_user]
 
     test "with valid credentials", %{conn: conn} do
-      #%{
-      #  first_name: "John",
-      #  last_name: "Doe",
-      #  email: "jd@gmail.com",
-      #  password_hash: Bcrypt.hash_pwd_salt("pass"),
-      #  provider: "local"
-      #}
-      #|> Zmeio.Identity.create_user()
-
       conn = post(conn, ~p"/api/auth/local/login", %{email: "jd@gmail.com", password: "pass"})
       resp = json_response(conn, 200)
 
@@ -72,16 +50,6 @@ defmodule ZmeioWeb.AuthControllerTest do
     end
 
     test "with invalid credentials", %{conn: conn} do
-      #user = Zmeio.UsersFixtures.user_fixture()
-      %{
-        first_name: "John",
-        last_name: "Doe",
-        email: "jd@gmail.com",
-        password_hash: Bcrypt.hash_pwd_salt("pass"),
-        provider: "local"
-      }
-      |> Zmeio.Identity.create_user()
-
       conn = post(conn, ~p"/api/auth/local/login", %{email: "jd@gmail.com", password: "Wrong_pass"})
       resp = json_response(conn, 401)
 

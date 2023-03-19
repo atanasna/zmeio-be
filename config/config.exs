@@ -27,7 +27,8 @@ config :logger, :console,
   metadata: [:request_id]
 
 # GUARDIAN
-config :zmeio, ZmeioWeb.Auth.Guardian,
+#config :zmeio, ZmeioWeb.Auth.Guardian,
+config :zmeio, ZmeioWeb.AuthKernel,
   issuer: "zmeio",
   secret_key: "rXuaLOOx4gN8GplJ1PzrZDuXmtEcWB/HQaZFSSVKEI7RVbbe7gpbBmGD9At8nM+R"
 

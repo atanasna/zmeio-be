@@ -1,4 +1,4 @@
-defmodule ZmeioWeb.AuthJSON do
+defmodule ZmeioWeb.AuthViewJSON do
   alias Zmeio.Identity.User
 
   @doc """

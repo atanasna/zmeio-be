@@ -7,7 +7,6 @@ defmodule Zmeio.Identity do
   alias Zmeio.Repo
 
   alias Zmeio.Identity.User
-
   @doc """
   Returns the list of users.
 
@@ -38,9 +37,10 @@ defmodule Zmeio.Identity do
   def get_user!(id), do: Repo.get!(User, id)
 
   def get_user_by_email(email) do
-    User
+    user = User
     |> where(email: ^email)
     |> Repo.one()
+    {:ok, user}
   end
   @doc """
   Creates a user.

@@ -29,4 +29,7 @@ defmodule Zmeio.Identity.User do
     |> unique_constraint(:email)
   end
 
+  def generate_password() do
+    for _ <- 1..30, into: "", do: <<Enum.random('0123456789abcdef')>>
+  end
 end

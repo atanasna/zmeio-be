@@ -1,9 +1,9 @@
 defmodule ZmeioWeb.UserControllerTest do
   use ZmeioWeb.ConnCase
 
-  import Zmeio.UsersFixtures
+  #import Zmeio.UsersFixtures
 
-  alias Zmeio.Identity.User
+  #alias Zmeio.Identity.User
 
   #@create_attrs %{
   #  full_name: "some full_name"
