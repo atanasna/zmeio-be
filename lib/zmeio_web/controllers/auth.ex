@@ -56,9 +56,7 @@ defmodule ZmeioWeb.AuthController do
   # Local Register
   #################################################################
   def register(conn, register_params) do
-    user_params = register_params
-    |> Map.put("password_hash", Bcrypt.hash_pwd_salt(register_params["password"]))
-    |> Map.put("provider", "local")
+    user_params = register_params |> Map.put("provider", "local")
 
     with {:ok, :auth, user} <- AuthKernel.create_user_from_register_params(user_params) do
       conn
