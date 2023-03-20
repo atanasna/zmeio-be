@@ -13,7 +13,8 @@ defmodule ZmeioWeb.AuthController do
   def oauth(conn, %{"id_token" => id_token} = params) do
     with {:ok, token_info} <- AuthKernel.validate_oauth_token(id_token, params["provider"]),
          {:ok, user} <- AuthKernel.get_or_create_user_from_oauth_token_info(token_info, params["provider"]),
-         {:ok, user, token} <- AuthKernel.authenticate_user(token_info["email"]) do
+         {:ok, user, token} <- AuthKernel.authenticate_user(token_info["email"])
+    do
       conn
       |> put_status(200)
       |> put_view(AuthViewJSON)
@@ -31,7 +32,9 @@ defmodule ZmeioWeb.AuthController do
   # Local Login
   #################################################################
   def login(conn, params) do
-    with {:ok, user, token} <- AuthKernel.authenticate_user(params["email"], params["password"]) do
+    with {:ok, user} <- AuthKernel.validate_password(params["email"], params["password"]),
+         {:ok, user, token} <- AuthKernel.authenticate_user(params["email"])
+    do
       conn
       |> put_status(200)
       |> put_view(AuthViewJSON)

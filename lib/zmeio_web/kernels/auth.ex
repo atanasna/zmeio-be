@@ -15,16 +15,16 @@ defmodule ZmeioWeb.AuthKernel do
   end
   def resource_from_claims(_), do: {:error, :no_id_provided}
 
-  def authenticate_user(email, password) do
-    case Identity.get_user_by_email(email) do
-      {:ok, nil} -> {:error, :unauthorized}
-      {:ok, user} ->
-        case Bcrypt.verify_pass(password, user.password_hash) do
-          true -> create_token(user)
-          false -> {:error, :unauthorized}
-        end
-    end
-  end
+  #def authenticate_user(email, password) do
+  #  case Identity.get_user_by_email(email) do
+  #    {:ok, nil} -> {:error, :unauthorized}
+  #    {:ok, user} ->
+  #      case Bcrypt.verify_pass(password, user.password_hash) do
+  #        true -> create_token(user)
+  #        false -> {:error, :unauthorized}
+  #      end
+  #  end
+  #end
 
   def authenticate_user(email) do
     case Identity.get_user_by_email(email) do
@@ -33,9 +33,20 @@ defmodule ZmeioWeb.AuthKernel do
     end
   end
 
-  def create_token(user) do
+  defp create_token(user) do
     {:ok, token, _claims} = encode_and_sign(user)
     {:ok, user, token}
+  end
+
+  def validate_password(email, password) do
+    case Identity.get_user_by_email(email) do
+      {:ok, nil} -> {:error, :unauthorized}
+      {:ok, user} ->
+        case Bcrypt.verify_pass(password, user.password_hash) do
+          true -> {:ok, user}
+          false -> {:error, :unauthorized}
+        end
+    end
   end
 
   def validate_oauth_token(id_token, provider) do
