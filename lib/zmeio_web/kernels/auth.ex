@@ -2,6 +2,7 @@ defmodule ZmeioWeb.AuthKernel do
   use Guardian, otp_app: :zmeio
 
   alias Zmeio.Identity
+  alias Zmeio.Identity.User
   alias Zmeio.Identity.Google
 
   def subject_for_token(%{id: id}, _claims), do: {:ok, Kernel.to_string(id)}
@@ -9,11 +10,11 @@ defmodule ZmeioWeb.AuthKernel do
 
   def resource_from_claims(%{"sub" => id}) do
     case Identity.get_user!(id) do
-      nil -> {:error, :not_found}
+      nil ->  {:error, :auth, :not_found}
       user -> {:ok, user}
     end
   end
-  def resource_from_claims(_), do: {:error, :no_id_provided}
+  def resource_from_claims(_), do: {:error, :auth, :no_id_provided}
 
   #def authenticate_user(email, password) do
   #  case Identity.get_user_by_email(email) do
@@ -28,42 +29,49 @@ defmodule ZmeioWeb.AuthKernel do
 
   def authenticate_user(email) do
     case Identity.get_user_by_email(email) do
-      {:ok, nil} -> {:error, :unauthorized}
-      {:ok, user} -> create_token(user)
+      {:ok, user} ->
+        {:ok, token, _claims} = encode_and_sign(user)
+        {:ok, :auth, token}
+      {:error, :not_found} -> {:error, :auth, :unauthorized}
     end
-  end
-
-  defp create_token(user) do
-    {:ok, token, _claims} = encode_and_sign(user)
-    {:ok, user, token}
   end
 
   def validate_password(email, password) do
     case Identity.get_user_by_email(email) do
-      {:ok, nil} -> {:error, :unauthorized}
       {:ok, user} ->
         case Bcrypt.verify_pass(password, user.password_hash) do
-          true -> {:ok, user}
-          false -> {:error, :unauthorized}
+          true -> {:ok, :auth, user}
+          false ->  {:error, :auth, :unauthorized}
         end
+      {:error, :not_found} ->  {:error, :auth, :unauthorized}
     end
   end
 
   def validate_oauth_token(id_token, provider) do
     case provider do
-      "google" -> Google.validate_id_token(id_token)
+      "google" ->
+        case Google.validate_id_token(id_token) do
+          {:ok, token_info} -> {:ok, :auth, token_info}
+          {:error, _} -> {:error, :auth, :unauthorized}
+        end
+    end
+  end
+
+  def create_user_from_register_params(params) do
+    case Identity.create_user(params) do
+      {:ok, %User{} = user} -> {:ok, :auth, user}
+      {:error, msg} -> {:error, :auth, msg}
     end
   end
 
   def get_or_create_user_from_oauth_token_info(token_info, provider) do
     email = token_info["email"]
     case Identity.get_user_by_email(email) do
-      {:ok, nil} ->
+      {:ok, user} -> {:ok, :auth, user}
+      {:error, :not_found} ->
         case provider do
-          "google" -> {:ok, Google.create_user_from_oauth_token_info(token_info)}
+          "google" -> {:ok, :auth, Google.create_user_from_oauth_token_info(token_info)}
         end
-      {:ok, user} -> {:ok, user}
-      error -> error
     end
 
   end

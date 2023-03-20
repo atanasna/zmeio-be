@@ -8,8 +8,8 @@ defmodule Zmeio.Identity.Google do
     |> Poison.decode!
 
     cond do
-      token_info["aud"] != System.fetch_env!("GOOGLE_CLIENT_ID") -> {:error, :oauth, "invalid client id"}
-      token_info["email_verified"] != "true" -> {:error, :oauth, "email not verified"}
+      token_info["aud"] != System.fetch_env!("GOOGLE_CLIENT_ID") -> {:error, "invalid client id"}
+      token_info["email_verified"] != "true" -> {:error, "email not verified"}
       true -> {:ok, token_info}
     end
   end

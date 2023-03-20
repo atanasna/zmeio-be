@@ -40,7 +40,11 @@ defmodule Zmeio.Identity do
     user = User
     |> where(email: ^email)
     |> Repo.one()
-    {:ok, user}
+
+    case user do
+      %User{} = user -> {:ok, user}
+      _ -> {:error, :not_found}
+    end
   end
   @doc """
   Creates a user.

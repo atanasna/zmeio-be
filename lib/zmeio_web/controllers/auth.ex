@@ -1,82 +1,77 @@
 defmodule ZmeioWeb.AuthController do
   use ZmeioWeb, :controller
 
+  action_fallback ZmeioWeb.FallbackController
+
   alias Zmeio.Identity
   alias Zmeio.Identity.User
   alias ZmeioWeb.AuthKernel
   alias ZmeioWeb.AuthViewJSON
-  alias ZmeioWeb.ErrorsViewJSON
+  alias ZmeioWeb.ErrorViewJSON
 
   #################################################################
   # Oauth Login/Register
   #################################################################
-  def oauth(conn, %{"id_token" => id_token} = params) do
-    with {:ok, token_info} <- AuthKernel.validate_oauth_token(id_token, params["provider"]),
-         {:ok, user} <- AuthKernel.get_or_create_user_from_oauth_token_info(token_info, params["provider"]),
-         {:ok, user, token} <- AuthKernel.authenticate_user(token_info["email"])
+  def oauth(conn, %{"id_token" => id_token} = oauth_params) do
+    with {:ok, :auth, token_info} <- AuthKernel.validate_oauth_token(id_token, oauth_params["provider"]),
+         {:ok, :auth, user} <- AuthKernel.get_or_create_user_from_oauth_token_info(token_info, oauth_params["provider"]),
+         {:ok, :auth, token} <- AuthKernel.authenticate_user(token_info["email"])
     do
       conn
       |> put_status(200)
       |> put_view(AuthViewJSON)
       |> render(:show, user: Map.put(user, :token, token))
     else
-      {:error, :oauth, msg} ->
+      {:error, :auth, :unauthorized} ->
         conn
         |> put_status(401)
-        |> put_view(ErrorsViewJSON)
-        |> render(:generic, %{message: "invalid oauth authentication: #{msg}"})
+        |> put_view(ErrorViewJSON)
+        |> render(:generic, %{message: "Invalid Oauth Information"})
+      _any_other_error -> {:error, :internal_error} # Handled by the fallback controller
     end
   end
 
   #################################################################
   # Local Login
   #################################################################
-  def login(conn, params) do
-    with {:ok, user} <- AuthKernel.validate_password(params["email"], params["password"]),
-         {:ok, user, token} <- AuthKernel.authenticate_user(params["email"])
+  def login(conn, login_params) do
+    with {:ok, :auth, user} <- AuthKernel.validate_password(login_params["email"], login_params["password"]),
+         {:ok, :auth, token} <- AuthKernel.authenticate_user(login_params["email"])
     do
       conn
       |> put_status(200)
       |> put_view(AuthViewJSON)
       |> render(:show, user: Map.put(user, :token, token))
     else
-      {:error, :unauthorized} ->
+      {:error, :auth, :unauthorized} ->
         conn
         |> put_status(:unauthorized)
-        |> put_view(ErrorsViewJSON)
-        |> render(:generic, %{message: "email or password is wrong"})
-      {:error, _} ->
-        conn
-        |> put_status(500)
-        |> put_view(ErrorsViewJSON)
-        |> render(:generic, %{message: "something went wrong"})
+        |> put_view(ErrorViewJSON)
+        |> render(:generic, %{message: "Invalid Email or Password"})
+      _any_other_error -> {:error, :internal_error} # Handled by the fallback controller
     end
   end
 
   #################################################################
   # Local Register
   #################################################################
-  def register(conn, params) do
-    user_params = params
-    |> Map.put("password_hash", Bcrypt.hash_pwd_salt(params["password"]))
+  def register(conn, register_params) do
+    user_params = register_params
+    |> Map.put("password_hash", Bcrypt.hash_pwd_salt(register_params["password"]))
     |> Map.put("provider", "local")
 
-    with {:ok, %User{} = user} <- Identity.create_user(user_params) do
+    with {:ok, :auth, user} <- AuthKernel.create_user_from_register_params(user_params) do
       conn
       |> put_status(:created)
       |> put_view(AuthViewJSON)
       |> render(:show, user: user)
     else
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, :auth, %Ecto.Changeset{} = changeset} ->
         conn
         |> put_status(422)
-        |> put_view(ErrorsViewJSON)
+        |> put_view(ErrorViewJSON)
         |> render(:ecto, %{changeset: changeset})
-      {:error, _} ->
-        conn
-        |> put_status(500)
-        |> put_view(ErrorsViewJSON)
-        |> render(:generic, %{message: "something went wrong"})
+      _any_other_error -> {:error, :internal_error} # Handled by the fallback controller
     end
   end
 end

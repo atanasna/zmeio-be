@@ -15,7 +15,7 @@ config :zmeio,
 config :zmeio, ZmeioWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [
-    formats: [json: ZmeioWeb.ErrorJSON],
+    formats: [json: ZmeioWeb.ErrorViewJSON],
     layout: false
   ],
   pubsub_server: Zmeio.PubSub,
