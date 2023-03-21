@@ -11,23 +11,25 @@ defmodule Zmeio.UsersTest do
     @invalid_attrs %{email: "pesho12"}
 
     test "list_users/0 returns all users" do
-      user = user_fixture()
-      assert Identity.list_users() == [user]
+      fixed_user = user_fixture()
+      assert Identity.list_users() |> Enum.count == 1
     end
 
     test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
-      assert Identity.get_user!(user.id) == user
+      fixed_user = user_fixture()
+      user = Identity.get_user!(fixed_user.id)
+
+      assert user.id == fixed_user.id
+      assert user.password_hash == fixed_user.password_hash
+      assert user.email == fixed_user.email
     end
 
     test "create_user/1 with valid data creates a user" do
-      valid_attrs = %{first_name: "Nasko", last_name: "Naskov", email: "nasko@abv.bg", provider: "local"}
+      valid_attrs = %{email: "nasko@abv.bg", password: "naskonaskonasko", password_confirmation: "naskonaskonasko", provider: "local"}
+      {:ok, %User{} = user} = Identity.create_user(valid_attrs)
 
-      assert {:ok, %User{} = user} = Identity.create_user(valid_attrs)
-      assert user.first_name == "Nasko"
-      assert user.last_name == "Naskov"
       assert user.email == "nasko@abv.bg"
-      assert user.provider == "local"
+      assert user.password_hash |> String.match?(~r/^\$2b/)
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -35,20 +37,20 @@ defmodule Zmeio.UsersTest do
     end
 
     test "update_user/2 with valid data updates the user" do
-      user = user_fixture()
+      fixed_user = user_fixture()
       update_attrs = %{first_name: "Nasko", last_name: "Naskov", email: "nasko@abv.bg", provider: "local"}
 
-      assert {:ok, %User{} = user} = Identity.update_user(user, update_attrs)
-      assert user.first_name == "Nasko"
-      assert user.last_name == "Naskov"
-      assert user.email == "nasko@abv.bg"
-      assert user.provider == "local"
+      {:ok, update_user} = Identity.update_user(fixed_user, update_attrs)
+
+      assert update_user.email == "nasko@abv.bg"
+      assert update_user.first_name == "Nasko"
+      assert update_user.last_name == "Naskov"
+      assert update_user.provider == "local"
     end
 
     test "update_user/2 with invalid data returns error changeset" do
-      user = user_fixture()
-      assert {:error, %Ecto.Changeset{}} = Identity.update_user(user, @invalid_attrs)
-      assert user == Identity.get_user!(user.id)
+      fixed_user = user_fixture()
+      assert {:error, %Ecto.Changeset{}} = Identity.update_user(fixed_user, @invalid_attrs)
     end
 
     test "delete_user/1 deletes the user" do

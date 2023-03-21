@@ -8,9 +8,8 @@ defmodule ZmeioWeb.AuthControllerTest do
       pre_user_count = Zmeio.Identity.list_users |> Enum.count()
       register_valid_attrs = %{
         email: "jdoe@gmail.com",
-        first_name: "John",
-        last_name: "Doe",
-        password: "alabala"
+        password: "alabalaalabala",
+        password_confirmation: "alabalaalabala",
       }
 
       conn = post(conn, ~p"/api/auth/local/register", register_valid_attrs)
@@ -18,19 +17,17 @@ defmodule ZmeioWeb.AuthControllerTest do
 
       post_user_count = Zmeio.Identity.list_users |> Enum.count()
 
-      assert resp["first_name"] == register_valid_attrs.first_name
-      assert resp["last_name"] == register_valid_attrs.last_name
       assert resp["email"] == register_valid_attrs.email
-      assert resp["provider"] == "local"
+      assert resp["id"] |> String.match?(~r/[\S\-]{36}/)
+      assert resp["token"] |> String.match?(~r/\S{100,}/)
       assert post_user_count == pre_user_count + 1
     end
 
     test "with invalid inputs", %{conn: conn} do
       register_invalid_attrs = %{
         email: "jdoe",
-        first_name: "John",
-        last_name: "Doe",
-        password: "alabala"
+        password: "alabala",
+        password_confirmation: "2alabala"
       }
 
       conn = post(conn, ~p"/api/auth/local/register", register_invalid_attrs)
@@ -42,7 +39,7 @@ defmodule ZmeioWeb.AuthControllerTest do
     setup [:create_user]
 
     test "with valid credentials", %{conn: conn} do
-      conn = post(conn, ~p"/api/auth/local/login", %{email: "jd@gmail.com", password: "pass"})
+      conn = post(conn, ~p"/api/auth/local/login", %{email: "jd@gmail.com", password: "alabalaalabala"})
       resp = json_response(conn, 200)
 
       assert resp["email"] == "jd@gmail.com"
