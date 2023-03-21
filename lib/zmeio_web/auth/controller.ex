@@ -20,7 +20,7 @@ defmodule ZmeioWeb.AuthController do
       conn
       |> put_status(200)
       |> put_view(AuthViewJSON)
-      |> render(:show, user: Map.put(user, :token, token))
+      |> render(:login, %{user: user, token: token})
     else
       {:error, :auth, :unauthorized} ->
         conn
@@ -41,7 +41,7 @@ defmodule ZmeioWeb.AuthController do
       conn
       |> put_status(200)
       |> put_view(AuthViewJSON)
-      |> render(:show, user: Map.put(user, :token, token))
+      |> render(:login, %{user: user, token: token})
     else
       {:error, :auth, :unauthorized} ->
         conn
@@ -58,11 +58,13 @@ defmodule ZmeioWeb.AuthController do
   def register(conn, register_params) do
     user_params = register_params |> Map.put("provider", "local")
 
-    with {:ok, :auth, user} <- AuthKernel.create_user_from_register_params(user_params) do
+    with {:ok, :auth, user} <- AuthKernel.create_user_from_register_params(user_params),
+         {:ok, :auth, token} <- AuthKernel.authenticate_user(user_params["email"])
+    do
       conn
       |> put_status(:created)
       |> put_view(AuthViewJSON)
-      |> render(:show, user: user)
+      |> render(:login, %{user: user, token: token})
     else
       {:error, :auth, %Ecto.Changeset{} = changeset} ->
         conn
