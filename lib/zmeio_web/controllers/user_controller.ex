@@ -22,7 +22,10 @@ defmodule ZmeioWeb.UserController do
 
   def show(conn, %{"id" => id}) do
     user = Identity.get_user!(id)
-    render(conn, :show, user: user)
+    IO.inspect conn
+    conn
+    |> put_status(200)
+    |> render(:show, user: user)
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do

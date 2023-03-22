@@ -5,7 +5,7 @@ defmodule ZmeioWeb.Router do
   #defp handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
   #  conn |> json(%{errors: message}) |> halt()
   #end
-#
+
   #defp handle_errors(conn, %{reason: %{message: message}}) do
   #  conn |> json(%{errors: message}) |> halt()
   #end
@@ -14,12 +14,9 @@ defmodule ZmeioWeb.Router do
     plug :accepts, ["json"]
   end
 
-  #scope "/auth", ZmeioWeb do
-  #  #pipe_through :browser
-  #  pipe_through :api
-  #  get "/:provider", AuthController, :request
-  #  get "/:provider/callback", AuthController, :create
-  #end
+  pipeline :auth do
+    plug ZmeioWeb.Auth.Pipeline
+  end
 
   scope "/api", ZmeioWeb do
     pipe_through :api
@@ -28,6 +25,12 @@ defmodule ZmeioWeb.Router do
     post "/auth/local/login", AuthController, :login
     post "/auth/local/register", AuthController, :register
     post "/auth/:provider/login", AuthController, :oauth
+  end
+
+  scope "/api", ZmeioWeb do
+    pipe_through [:api, :auth]
+
+    get "/users/:id", UserController, :show
 
     get "/edibles", EdibleController, :index
     get "/edibles/:id", EdibleController, :show
@@ -50,7 +53,5 @@ defmodule ZmeioWeb.Router do
     resources "/order_items", OrderItemController, except: [:edit, :new]
     resources "/recipes", RecipeController, except: [:edit, :new]
     resources "/recipe_items", RecipeItemController, except: [:edit, :new]
-    #post "/auth/signin", AccountController, :signin
-    #post "/auth/signin", AccountController, :signin
   end
 end

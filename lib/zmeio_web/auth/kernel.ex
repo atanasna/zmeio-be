@@ -14,6 +14,7 @@ defmodule ZmeioWeb.AuthKernel do
       user -> {:ok, user}
     end
   end
+
   def resource_from_claims(_), do: {:error, :auth, :no_id_provided}
 
   #def authenticate_user(email, password) do
