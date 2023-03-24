@@ -1,6 +1,14 @@
 defmodule ZmeioWeb.Router do
   use ZmeioWeb, :router
-  #use Plug.ErrorHandler
+  use Plug.ErrorHandler
+
+  @impl Plug.ErrorHandler
+  def handle_errors(conn, %{kind: kind, reason: reason, stack: stack}) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(conn.status, Jason.encode!(%{error: to_string(reason.message)}))
+    |> halt()
+  end
 
   #defp handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
   #  conn |> json(%{errors: message}) |> halt()
@@ -12,10 +20,12 @@ defmodule ZmeioWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   pipeline :auth do
-    plug ZmeioWeb.Auth.Pipeline
+    plug ZmeioWeb.Auth.Pipelines.EnsureAuthentication
+    plug ZmeioWeb.Auth.Plugs.PutUserInConn
   end
 
   scope "/api", ZmeioWeb do

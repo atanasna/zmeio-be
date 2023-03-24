@@ -17,34 +17,23 @@ defmodule ZmeioWeb.AuthKernel do
 
   def resource_from_claims(_), do: {:error, :auth, :no_id_provided}
 
-  #def authenticate_user(email, password) do
-  #  case Identity.get_user_by_email(email) do
-  #    {:ok, nil} -> {:error, :unauthorized}
-  #    {:ok, user} ->
-  #      case Bcrypt.verify_pass(password, user.password_hash) do
-  #        true -> create_token(user)
-  #        false -> {:error, :unauthorized}
-  #      end
-  #  end
-  #end
-
   def authenticate_user(email) do
     case Identity.get_user_by_email(email) do
       {:ok, user} ->
-        {:ok, token, _claims} = encode_and_sign(user)
+        {:ok, token, _claims} = encode_and_sign(user, %{}, ttl: {4, :hour})
         {:ok, :auth, token}
-      {:error, :not_found} -> {:error, :auth, :unauthorized}
+      {:error, :not_found} -> {:error, :auth, :unauthenticated}
     end
   end
 
-  def validate_password(email, password) do
+  def get_user_on_valid_password(email, password) do
     case Identity.get_user_by_email(email) do
       {:ok, user} ->
         case Bcrypt.verify_pass(password, user.password_hash) do
           true -> {:ok, :auth, user}
-          false ->  {:error, :auth, :unauthorized}
+          false ->  {:error, :auth, :unauthenticated}
         end
-      {:error, :not_found} ->  {:error, :auth, :unauthorized}
+      {:error, :not_found} ->  {:error, :auth, :unauthenticated}
     end
   end
 
@@ -53,7 +42,7 @@ defmodule ZmeioWeb.AuthKernel do
       "google" ->
         case Google.validate_id_token(id_token) do
           {:ok, token_info} -> {:ok, :auth, token_info}
-          {:error, _} -> {:error, :auth, :unauthorized}
+          {:error, _} -> {:error, :auth, :unauthenticated}
         end
     end
   end

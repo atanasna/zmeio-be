@@ -3,6 +3,7 @@ defmodule ZmeioWeb.UserController do
 
   alias Zmeio.Identity
   alias Zmeio.Identity.User
+  alias ZmeioWeb.ErrorViewJSON
 
   action_fallback ZmeioWeb.FallbackController
 
@@ -21,11 +22,21 @@ defmodule ZmeioWeb.UserController do
   end
 
   def show(conn, %{"id" => id}) do
-    user = Identity.get_user!(id)
+    #user = Identity.get_user!(id)
     IO.inspect conn
-    conn
-    |> put_status(200)
-    |> render(:show, user: user)
+
+    case conn.assigns.user.id == id do
+      true ->
+        conn
+        |> put_status(200)
+        |> render(:show, user: conn.assigns.user)
+      false ->
+        conn
+        |> put_status(403)
+        |> put_view(ErrorViewJSON)
+        |> render(:generic, %{message: "Access to this resource is forbidden"})
+    end
+
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do

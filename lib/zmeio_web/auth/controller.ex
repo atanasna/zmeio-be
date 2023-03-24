@@ -18,16 +18,15 @@ defmodule ZmeioWeb.AuthController do
          {:ok, :auth, token} <- AuthKernel.authenticate_user(token_info["email"])
     do
       conn
+      |> Plug.Conn.put_session(:user_id, user.id)
       |> put_status(200)
       |> put_view(AuthViewJSON)
       |> render(:login, %{user: user, token: token})
     else
-      {:error, :auth, :unauthorized} ->
-        conn
-        |> put_status(401)
-        |> put_view(ErrorViewJSON)
-        |> render(:generic, %{message: "Invalid Oauth Information"})
-      _any_other_error -> {:error, :internal_error} # Handled by the fallback controller
+      {:error, :auth, :unauthenticated} ->
+        raise ZmeioWeb.Auth.Exceptions.NotAuthenticated, message: "Invalid Oauth Information"
+      _error ->
+        raise ZmeioWeb.Generic.Exceptions.InternalServerError
     end
   end
 
@@ -35,20 +34,19 @@ defmodule ZmeioWeb.AuthController do
   # Local Login
   #################################################################
   def login(conn, login_params) do
-    with {:ok, :auth, user} <- AuthKernel.validate_password(login_params["email"], login_params["password"]),
+    with {:ok, :auth, user} <- AuthKernel.get_user_on_valid_password(login_params["email"], login_params["password"]),
          {:ok, :auth, token} <- AuthKernel.authenticate_user(login_params["email"])
     do
       conn
+      |> Plug.Conn.put_session(:user_id, user.id) #represented as cookie in browser
       |> put_status(200)
       |> put_view(AuthViewJSON)
       |> render(:login, %{user: user, token: token})
     else
-      {:error, :auth, :unauthorized} ->
-        conn
-        |> put_status(:unauthorized)
-        |> put_view(ErrorViewJSON)
-        |> render(:generic, %{message: "Invalid Email or Password"})
-      _any_other_error -> {:error, :internal_error} # Handled by the fallback controller
+      {:error, :auth, :unauthenticated} ->
+        raise ZmeioWeb.Auth.Exceptions.NotAuthenticated, message: "Invalid Email or Password"
+      _error ->
+        raise ZmeioWeb.Generic.Exceptions.InternalServerError
     end
   end
 
@@ -62,6 +60,7 @@ defmodule ZmeioWeb.AuthController do
          {:ok, :auth, token} <- AuthKernel.authenticate_user(user_params["email"])
     do
       conn
+      |> Plug.Conn.put_session(:user_id, user.id)
       |> put_status(:created)
       |> put_view(AuthViewJSON)
       |> render(:login, %{user: user, token: token})
@@ -71,7 +70,8 @@ defmodule ZmeioWeb.AuthController do
         |> put_status(422)
         |> put_view(ErrorViewJSON)
         |> render(:ecto, %{changeset: changeset})
-      _any_other_error -> {:error, :internal_error} # Handled by the fallback controller
+      _error ->
+        raise ZmeioWeb.Generic.Exceptions.InternalServerError
     end
   end
 end
