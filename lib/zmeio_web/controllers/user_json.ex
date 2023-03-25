@@ -5,7 +5,7 @@ defmodule ZmeioWeb.UserJSON do
   Renders a list of users.
   """
   def index(%{users: users}) do
-    %{data: for(user <- users, do: data(user))}
+    for(user <- users, do: data(user))
   end
 
   @doc """
@@ -21,6 +21,7 @@ defmodule ZmeioWeb.UserJSON do
       email: user.email,
       first_name: user.first_name,
       last_name: user.last_name,
+      is_admin: user.is_admin,
       #token: user.token,
       provider: user.provider,
       avatar: user.avatar,

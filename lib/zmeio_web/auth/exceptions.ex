@@ -1,7 +1,7 @@
 defmodule ZmeioWeb.Auth.Exceptions.NotAuthenticated do
-  defexception [message: "not authenticated", plug_status: 401]
+  defexception [message: "not authenticated", plug_status: :unauthorized]
 end
 
 defmodule ZmeioWeb.Auth.Exceptions.NotAuthorized do
-  defexception [message: "not auhotized", plug_status: 403]
+  defexception [message: "not authorized", plug_status: :forbidden]
 end

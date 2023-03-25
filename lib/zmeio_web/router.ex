@@ -6,7 +6,7 @@ defmodule ZmeioWeb.Router do
   def handle_errors(conn, %{kind: kind, reason: reason, stack: stack}) do
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(conn.status, Jason.encode!(%{error: to_string(reason.message)}))
+    |> send_resp(conn.status, Jason.encode!(%{errors: to_string(reason.message)}))
     |> halt()
   end
 
@@ -25,22 +25,29 @@ defmodule ZmeioWeb.Router do
 
   pipeline :auth do
     plug ZmeioWeb.Auth.Pipelines.EnsureAuthentication
-    plug ZmeioWeb.Auth.Plugs.PutUserInConn
+    plug ZmeioWeb.Auth.Plugs.LoadUser
   end
 
   scope "/api", ZmeioWeb do
     pipe_through :api
     get "/", DefaultController, :index
 
-    post "/auth/local/login", AuthController, :login
-    post "/auth/local/register", AuthController, :register
-    post "/auth/:provider/login", AuthController, :oauth
+    post "/auth/login", AuthController, :login
+    post "/auth/register", AuthController, :register
+    post "/auth/login/:provider", AuthController, :oauth
   end
 
   scope "/api", ZmeioWeb do
     pipe_through [:api, :auth]
 
+    get "/auth/logout", AuthController, :logout
+
+    get "/users", UserController, :index
     get "/users/:id", UserController, :show
+    post "/users", UserController, :create
+    put "/users/:id", UserController, :update
+    put "/users/:id/reset_password", UserController, :reset_password
+    delete "/users/:id", UserController, :delete
 
     get "/edibles", EdibleController, :index
     get "/edibles/:id", EdibleController, :show

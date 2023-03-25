@@ -17,13 +17,9 @@ defmodule ZmeioWeb.AuthKernel do
 
   def resource_from_claims(_), do: {:error, :auth, :no_id_provided}
 
-  def authenticate_user(email) do
-    case Identity.get_user_by_email(email) do
-      {:ok, user} ->
-        {:ok, token, _claims} = encode_and_sign(user, %{}, ttl: {4, :hour})
-        {:ok, :auth, token}
-      {:error, :not_found} -> {:error, :auth, :unauthenticated}
-    end
+  def authenticate_user(user) do
+    {:ok, token, _claims} = encode_and_sign(user, %{}, ttl: {4, :hour})
+    {:ok, :auth, token}
   end
 
   def get_user_on_valid_password(email, password) do
@@ -37,7 +33,7 @@ defmodule ZmeioWeb.AuthKernel do
     end
   end
 
-  def validate_oauth_token(id_token, provider) do
+  def get_token_info_on_valid_oauth_id_token(id_token, provider) do
     case provider do
       "google" ->
         case Google.validate_id_token(id_token) do
@@ -47,8 +43,8 @@ defmodule ZmeioWeb.AuthKernel do
     end
   end
 
-  def create_user_from_register_params(params) do
-    case Identity.create_user(params) do
+  def create_user_on_registeration(email, password, confirmation) do
+    case Identity.create_user(%{"email" => email, "password" => password, "password_confirmation" => confirmation}) do
       {:ok, %User{} = user} -> {:ok, :auth, user}
       {:error, msg} -> {:error, :auth, msg}
     end

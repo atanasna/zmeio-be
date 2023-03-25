@@ -6,6 +6,11 @@ defmodule ZmeioWeb.RecipeController do
 
   action_fallback ZmeioWeb.FallbackController
 
+  #def public(conn, _params) do
+  #  recipe = Store.list_public_recipes()
+  #  render(conn, :index, recipe: recipe)
+  #end
+
   def index(conn, _params) do
     recipe = Store.list_recipes()
     render(conn, :index, recipe: recipe)

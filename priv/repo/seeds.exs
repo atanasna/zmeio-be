@@ -66,7 +66,7 @@ defmodule Zmeio.Seed do
   end
 
   def recipes() do
-    first_recipe = %Recipe{name: "WorldWind"} |> Repo.insert!()
+    first_recipe = %Recipe{name: "WorldWind", is_public: true} |> Repo.insert!()
     [
       %RecipeItem{edible: Store.get_edible_by_name("cashew"), recipe: first_recipe, batches: 1},
       %RecipeItem{edible: Store.get_edible_by_name("pistachio"), recipe: first_recipe, batches: 1},

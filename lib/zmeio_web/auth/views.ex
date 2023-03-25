@@ -9,4 +9,12 @@ defmodule ZmeioWeb.AuthViewJSON do
     }
   end
 
+  def logout(%{user: user}) do
+    %{
+      id: user.id,
+      email: user.email,
+      token: nil
+    }
+  end
+
 end

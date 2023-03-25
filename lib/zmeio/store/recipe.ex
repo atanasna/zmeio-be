@@ -10,6 +10,7 @@ defmodule Zmeio.Store.Recipe do
   @foreign_key_type :binary_id
   schema "recipes" do
     field :name, :string
+    field :is_public, :boolean, default: false
     belongs_to :user, Zmeio.Auth.User
     has_many :recipe_items, Zmeio.Store.RecipeItem
     has_many :order_items, Zmeio.Store.OrderItem

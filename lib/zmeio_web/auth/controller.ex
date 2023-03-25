@@ -12,10 +12,10 @@ defmodule ZmeioWeb.AuthController do
   #################################################################
   # Oauth Login/Register
   #################################################################
-  def oauth(conn, %{"id_token" => id_token} = oauth_params) do
-    with {:ok, :auth, token_info} <- AuthKernel.validate_oauth_token(id_token, oauth_params["provider"]),
-         {:ok, :auth, user} <- AuthKernel.get_or_create_user_from_oauth_token_info(token_info, oauth_params["provider"]),
-         {:ok, :auth, token} <- AuthKernel.authenticate_user(token_info["email"])
+  def oauth(conn, %{"id_token" => id_token, "provider" => provider}) do
+    with {:ok, :auth, token_info} <- AuthKernel.get_token_info_on_valid_oauth_id_token(id_token, provider),
+         {:ok, :auth, user} <- AuthKernel.get_or_create_user_from_oauth_token_info(token_info, provider),
+         {:ok, :auth, token} <- AuthKernel.authenticate_user(user)
     do
       conn
       |> Plug.Conn.put_session(:user_id, user.id)
@@ -24,40 +24,19 @@ defmodule ZmeioWeb.AuthController do
       |> render(:login, %{user: user, token: token})
     else
       {:error, :auth, :unauthenticated} ->
-        raise ZmeioWeb.Auth.Exceptions.NotAuthenticated, message: "Invalid Oauth Information"
+        raise ZmeioWeb.Auth.Exceptions.NotAuthenticated, message: "invalid oauth information"
       _error ->
         raise ZmeioWeb.Generic.Exceptions.InternalServerError
     end
   end
+  def oauth(conn, _), do: raise ZmeioWeb.Generic.Exceptions.WrongInput, message: "request should contain id_token and provider"
 
   #################################################################
-  # Local Login
+  # Register
   #################################################################
-  def login(conn, login_params) do
-    with {:ok, :auth, user} <- AuthKernel.get_user_on_valid_password(login_params["email"], login_params["password"]),
-         {:ok, :auth, token} <- AuthKernel.authenticate_user(login_params["email"])
-    do
-      conn
-      |> Plug.Conn.put_session(:user_id, user.id) #represented as cookie in browser
-      |> put_status(200)
-      |> put_view(AuthViewJSON)
-      |> render(:login, %{user: user, token: token})
-    else
-      {:error, :auth, :unauthenticated} ->
-        raise ZmeioWeb.Auth.Exceptions.NotAuthenticated, message: "Invalid Email or Password"
-      _error ->
-        raise ZmeioWeb.Generic.Exceptions.InternalServerError
-    end
-  end
-
-  #################################################################
-  # Local Register
-  #################################################################
-  def register(conn, register_params) do
-    user_params = register_params |> Map.put("provider", "local")
-
-    with {:ok, :auth, user} <- AuthKernel.create_user_from_register_params(user_params),
-         {:ok, :auth, token} <- AuthKernel.authenticate_user(user_params["email"])
+  def register(conn, %{"email" => email, "password" => password, "password_confirmation" => confirmation}) do
+    with {:ok, :auth, user} <- AuthKernel.create_user_on_registeration(email, password, confirmation),
+         {:ok, :auth, token} <- AuthKernel.authenticate_user(user)
     do
       conn
       |> Plug.Conn.put_session(:user_id, user.id)
@@ -74,4 +53,38 @@ defmodule ZmeioWeb.AuthController do
         raise ZmeioWeb.Generic.Exceptions.InternalServerError
     end
   end
+  def register(conn, _), do: raise ZmeioWeb.Generic.Exceptions.WrongInput, message: "request should contain email, password and password_confirmation"
+
+  #################################################################
+  # Login
+  #################################################################
+  def login(conn, %{"email" => email, "password" => password}) do
+    with {:ok, :auth, user} <- AuthKernel.get_user_on_valid_password(email, password),
+         {:ok, :auth, token} <- AuthKernel.authenticate_user(user)
+    do
+      conn
+      |> Plug.Conn.put_session(:user_id, user.id) #represented as cookie in browser
+      |> put_status(200)
+      |> put_view(AuthViewJSON)
+      |> render(:login, %{user: user, token: token})
+    else
+      {:error, :auth, :unauthenticated} ->
+        raise ZmeioWeb.Auth.Exceptions.NotAuthenticated, message: "invalid email or password"
+      _error ->
+        raise ZmeioWeb.Generic.Exceptions.InternalServerError
+    end
+  end
+  def login(conn, _), do: raise ZmeioWeb.Generic.Exceptions.WrongInput, message: "request should contain email and password"
+
+  #################################################################
+  # Logout
+  #################################################################
+  def logout(conn, %{}) do
+    conn
+    |> Plug.Conn.delete_session(:user_id)
+    |> put_status(200)
+    |> put_view(AuthViewJSON)
+    |> render(:logout)
+  end
+
 end
