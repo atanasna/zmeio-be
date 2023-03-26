@@ -1,7 +1,7 @@
-defmodule ZmeioWeb.Auth.Pipelines.EnsureAuthentication do
+defmodule ZmeioWeb.Pipes.EnsureAuthentication do
   use Guardian.Plug.Pipeline, otp_app: :zmeio,
   module: ZmeioWeb.AuthKernel,
-  error_handler: ZmeioWeb.Auth.Errors
+  error_handler: ZmeioWeb.Errors.Auth
 
   # If there is a session token, validate it
   plug Guardian.Plug.VerifySession, claims: %{"typ" => "access"}

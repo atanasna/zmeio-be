@@ -12,7 +12,7 @@ defmodule Zmeio.Identity.User do
     field :password_hash, :string
     field :first_name, :string
     field :last_name, :string
-    field :is_admin, :boolean, default: false
+    field :role, :string, default: "user"
     field :provider, :string, default: "local"
     field :token, :string
     field :avatar, :string
@@ -34,7 +34,7 @@ defmodule Zmeio.Identity.User do
 
   def update_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :is_admin, :first_name, :last_name, :provider, :avatar])
+    |> cast(attrs, [:email, :role, :first_name, :last_name, :provider, :avatar])
     |> validate_required([:email, :provider])
     |> validate_format(:email, ~r/^\S+@\S+$/, message: "must be a valid email address")
     |> validate_length(:email, max: 160, message: "must be less than 160 characters long")

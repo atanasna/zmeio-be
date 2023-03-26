@@ -1,4 +1,4 @@
-defmodule ZmeioWeb.Auth.Plugs.LoadUser do
+defmodule ZmeioWeb.Plugs.LoadUser do
   import Plug.Conn
   alias Zmeio.Identity
 

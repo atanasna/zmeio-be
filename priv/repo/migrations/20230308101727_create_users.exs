@@ -9,7 +9,7 @@ defmodule Zmeio.Repo.Migrations.CreateUsers do
       add :token, :string
       add :first_name, :string
       add :last_name, :string
-      add :is_admin, :boolean, default: false
+      add :role, :string, default: "user"
       add :provider, :string
       add :avatar, :string
 

@@ -24,8 +24,8 @@ defmodule ZmeioWeb.Router do
   end
 
   pipeline :auth do
-    plug ZmeioWeb.Auth.Pipelines.EnsureAuthentication
-    plug ZmeioWeb.Auth.Plugs.LoadUser
+    plug ZmeioWeb.Pipes.EnsureAuthentication
+    plug ZmeioWeb.Plugs.LoadUser
   end
 
   scope "/api", ZmeioWeb do

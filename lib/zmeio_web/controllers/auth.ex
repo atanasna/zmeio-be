@@ -24,12 +24,12 @@ defmodule ZmeioWeb.AuthController do
       |> render(:login, %{user: user, token: token})
     else
       {:error, :auth, :unauthenticated} ->
-        raise ZmeioWeb.Auth.Exceptions.NotAuthenticated, message: "invalid oauth information"
+        raise ZmeioWeb.Exceptions.Auth.NotAuthenticated, message: "invalid oauth information"
       _error ->
-        raise ZmeioWeb.Generic.Exceptions.InternalServerError
+        raise ZmeioWeb.Exceptions.Generic.InternalServerError
     end
   end
-  def oauth(conn, _), do: raise ZmeioWeb.Generic.Exceptions.WrongInput, message: "request should contain id_token and provider"
+  def oauth(conn, _), do: raise ZmeioWeb.Exceptions.Generic.WrongInput, message: "request should contain id_token and provider"
 
   #################################################################
   # Register
@@ -50,10 +50,10 @@ defmodule ZmeioWeb.AuthController do
         |> put_view(ErrorViewJSON)
         |> render(:ecto, %{changeset: changeset})
       _error ->
-        raise ZmeioWeb.Generic.Exceptions.InternalServerError
+        raise ZmeioWeb.Exceptions.Generic.InternalServerError
     end
   end
-  def register(conn, _), do: raise ZmeioWeb.Generic.Exceptions.WrongInput, message: "request should contain email, password and password_confirmation"
+  def register(conn, _), do: raise ZmeioWeb.Exceptions.Generic.WrongInput, message: "request should contain email, password and password_confirmation"
 
   #################################################################
   # Login
@@ -69,12 +69,12 @@ defmodule ZmeioWeb.AuthController do
       |> render(:login, %{user: user, token: token})
     else
       {:error, :auth, :unauthenticated} ->
-        raise ZmeioWeb.Auth.Exceptions.NotAuthenticated, message: "invalid email or password"
+        raise ZmeioWeb.Exceptions.Auth.NotAuthenticated, message: "invalid email or password"
       _error ->
-        raise ZmeioWeb.Generic.Exceptions.InternalServerError
+        raise ZmeioWeb.Exceptions.Generic.InternalServerError
     end
   end
-  def login(conn, _), do: raise ZmeioWeb.Generic.Exceptions.WrongInput, message: "request should contain email and password"
+  def login(conn, _), do: raise ZmeioWeb.Exceptions.Generic.WrongInput, message: "request should contain email and password"
 
   #################################################################
   # Logout

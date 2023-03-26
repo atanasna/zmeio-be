@@ -16,10 +16,10 @@ defmodule ZmeioWeb.UserController do
     IO.inspect conn
     user = conn.assigns.user
     cond do
-      is_nil(user) -> raise ZmeioWeb.Auth.Exceptions.NotAuthenticated
-      user.is_admin -> conn
+      is_nil(user) -> raise ZmeioWeb.Exceptions.Auth.NotAuthenticated
+      user.role == "admin" -> conn
       user.id == conn.params["id"] -> conn
-      true -> raise ZmeioWeb.Auth.Exceptions.NotAuthorized
+      true -> raise ZmeioWeb.Exceptions.Auth.NotAuthorized
     end
   end
 
@@ -65,7 +65,7 @@ defmodule ZmeioWeb.UserController do
       |> render(:show, user: user)
     end
   end
-  def reset_password(conn, _), do: raise ZmeioWeb.Generic.Exceptions.WrongInput, message: "request should contain id, password and password_confirmation"
+  def reset_password(conn, _), do: raise ZmeioWeb.Exceptions.Generic.WrongInput, message: "request should contain id, password and password_confirmation"
 
   def delete(conn, %{"id" => id}) do
     user = Identity.get_user!(id)
