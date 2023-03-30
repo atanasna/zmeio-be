@@ -21,7 +21,7 @@ defmodule ZmeioWeb.UserJSON do
       email: user.email,
       first_name: user.first_name,
       last_name: user.last_name,
-      rold: user.role,
+      role: user.role,
       #token: user.token,
       provider: user.provider,
       avatar: user.avatar,

@@ -44,6 +44,8 @@ defmodule Zmeio.MixProject do
       {:guardian, "~> 2.3"},
       {:bcrypt_elixir, "~> 3.0"},
       {:ja_serializer, "~> 0.17.0"},
+      {:absinthe, "~> 1.7.1"},
+      {:absinthe_plug, "~> 1.5"},
       #{:ueberauth, "~> 0.5"},
       #{:ueberauth_google, "~> 0.7"},
       {:httpoison, "~> 2.1"},

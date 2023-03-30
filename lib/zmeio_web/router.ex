@@ -3,7 +3,7 @@ defmodule ZmeioWeb.Router do
   use Plug.ErrorHandler
 
   @impl Plug.ErrorHandler
-  def handle_errors(conn, %{kind: kind, reason: reason, stack: stack}) do
+  def handle_errors(conn, %{kind: _kind, reason: reason, stack: _stack}) do
     conn
     |> put_resp_content_type("application/json")
     |> send_resp(conn.status, Jason.encode!(%{errors: to_string(reason.message)}))
@@ -24,8 +24,16 @@ defmodule ZmeioWeb.Router do
   end
 
   pipeline :auth do
-    plug ZmeioWeb.Pipes.EnsureAuthentication
-    plug ZmeioWeb.Plugs.LoadUser
+    #plug ZmeioWeb.Pipes.EnsureAuthentication
+    #plug ZmeioWeb.Plugs.SetCurrentUser
+    plug ZmeioWeb.Plugs.SetUser
+  end
+
+  scope "/graphql" do
+    pipe_through [:api, :auth]
+  
+    forward "/tool", Absinthe.Plug.GraphiQL, schema: ZmeioWeb.GraphQL.Schema
+    forward "/", Absinthe.Plug, schema: ZmeioWeb.GraphQL.Schema
   end
 
   scope "/api", ZmeioWeb do
