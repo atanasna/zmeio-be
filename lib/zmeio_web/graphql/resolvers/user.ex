@@ -1,7 +1,5 @@
 defmodule ZmeioWeb.GraphQL.Resolvers.User do
-  #alias Zmeio.GraphQL
-  #alias Zmeio.Identity
-  #alias Zmeio.Identity.User
+
   alias Zmeio.Identity.Auth
   #def signup(args, _context) do
   #  with {:ok, :auth, user} <- Auth.create_user_on_registeration(args),
@@ -20,7 +18,8 @@ defmodule ZmeioWeb.GraphQL.Resolvers.User do
     do
       {:ok, %{email: args.email, token: token, id: user.id}}
     else
-      {:error, :auth, %Ecto.Changeset{} = _changeset} -> {:error, message: "Registration failed!"}
+      #{:error, :auth, %Ecto.Changeset{} = _changeset} -> {:error, message: "Registration failed!"}
+      {:error, :auth, %Ecto.Changeset{} = changeset} -> {:error, GraphQL.Errors.extract(changeset)}
       _error -> raise ZmeioWeb.Exceptions.Generic.InternalServerError
     end
   end
@@ -41,7 +40,6 @@ defmodule ZmeioWeb.GraphQL.Resolvers.User do
   end
 
   def show(args, context) do
-    IO.inspect(args)
     if not authorized?(args, context), do: raise ZmeioWeb.Exceptions.Auth.NotAuthorized
 
     {:ok, Zmeio.Identity.get_user!(args.id)}
@@ -55,15 +53,12 @@ defmodule ZmeioWeb.GraphQL.Resolvers.User do
   end
 
   def index(args, context) do
-    IO.inspect("Praase")
     if not authorized?(args, context), do: raise ZmeioWeb.Exceptions.Auth.NotAuthorized
 
-    IO.inspect("Praase")
     {:ok, Zmeio.Identity.list_users()}
   end
 
   defp authorized?(args, %{context: %{user: user}}) do
-    IO.inspect(args)
     cond do
       is_nil(user) -> false
       user.role == "admin" -> true
