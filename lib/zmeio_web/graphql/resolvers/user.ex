@@ -1,16 +1,6 @@
 defmodule ZmeioWeb.GraphQL.Resolvers.User do
 
   alias Zmeio.Identity.Auth
-  #def signup(args, _context) do
-  #  with {:ok, :auth, user} <- Auth.create_user_on_registeration(args),
-  #       {:ok, :auth, token} <- Auth.create_token(user)
-  #  do
-  #    {:ok, %{id: user.id, email: user.email, token: token}}
-  #  else
-  #    {:error, changeset} ->
-  #      {:error, message: "Signup failed!", details: GraphQL.Errors.extract(changeset)}
-  #  end
-  #end
   
   def register(args, _context) do
     with {:ok, :auth, user} <- Auth.create_user_on_registeration(args.email, args.password, args.password_confirmation),
@@ -39,17 +29,20 @@ defmodule ZmeioWeb.GraphQL.Resolvers.User do
     
   end
 
-  def show(args, context) do
-    if not authorized?(args, context), do: raise ZmeioWeb.Exceptions.Auth.NotAuthorized
-
-    {:ok, Zmeio.Identity.get_user!(args.id)}
-  end
-
   def profile(_args, %{context: %{user: user}}) do
     case user do
       nil -> raise ZmeioWeb.Exceptions.Auth.NotAuthorized
       user -> {:ok, user}
     end
+  end
+
+  ###############################################
+  # Admin
+  ###############################################
+  def show(args, context) do
+    if not authorized?(args, context), do: raise ZmeioWeb.Exceptions.Auth.NotAuthorized
+
+    {:ok, Zmeio.Identity.get_user!(args.id)}
   end
 
   def index(args, context) do

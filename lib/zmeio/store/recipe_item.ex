@@ -7,7 +7,7 @@ defmodule Zmeio.Store.RecipeItem do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "recipe_items" do
-    field :batches, :integer
+    field :stacks, :integer
     belongs_to :edible, Zmeio.Store.Edible
     belongs_to :recipe, Zmeio.Store.Recipe
 
@@ -17,13 +17,13 @@ defmodule Zmeio.Store.RecipeItem do
   @doc false
   def changeset(recipe_item, attrs) do
     recipe_item
-    |> cast(attrs, [:batches])
-    |> validate_required([:batches])
+    |> cast(attrs, [:stacks])
+    |> validate_required([:stacks])
   end
 
   # -- Custom
   def price(item) do
     edible = Store.get_edible!(item.edible_id)
-    edible.batch_price * item.batches
+    edible.stack_price * item.stacks
   end
 end

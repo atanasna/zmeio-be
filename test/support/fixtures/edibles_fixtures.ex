@@ -17,9 +17,9 @@ defmodule Zmeio.EdiblesFixtures do
         fiber: 42.0,
         name: "some name",
         protein: 42.0,
-        stock: 42.0,
-        batch_weight: 100.0,
-        batch_price: 2.2
+        storage: 42.0,
+        stack_weight: 100.0,
+        stack_price: 2.2
       })
       |> Zmeio.Store.create_edible()
     edible

@@ -8,5 +8,9 @@ defmodule ZmeioWeb.GraphQL.Types.User do
     field :last_name, :string
     field :role, non_null(:string)
     field :avatar, :string
+
+    field :recipes, list_of(:recipe) do
+      resolve &ZmeioWeb.GraphQL.Resolvers.Recipe.private/2
+    end
   end
 end

@@ -10,9 +10,7 @@ defmodule Zmeio.RecipeItemsFixtures do
   def recipe_item_fixture(attrs \\ %{}) do
     {:ok, recipe_item} =
       attrs
-      |> Enum.into(%{
-        batches: 42
-      })
+      |> Enum.into(%{ stacks: 42 })
       |> Zmeio.Store.create_recipe_item()
 
     recipe_item

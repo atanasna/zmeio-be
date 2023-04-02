@@ -11,9 +11,9 @@ defmodule Zmeio.Store.Edible do
     field :fiber, :float
     field :name, :string
     field :protein, :float
-    field :stock, :float
-    field :batch_weight, :float
-    field :batch_price, :float
+    field :storage, :float
+    field :stack_weight, :float
+    field :stack_price, :float
     belongs_to :edible_type, Zmeio.Store.EdibleType
     has_many :recipe_items, Zmeio.Store.RecipeItem
 
@@ -23,7 +23,7 @@ defmodule Zmeio.Store.Edible do
   @doc false
   def changeset(edible, attrs) do
     edible
-    |> cast(attrs, [:name, :calories, :fat, :protein, :carbs, :fiber, :stock, :batch_weight, :batch_price])
-    |> validate_required([:name, :calories, :fat, :protein, :carbs, :fiber, :stock, :batch_weight, :batch_price])
+    |> cast(attrs, [:name, :calories, :fat, :protein, :carbs, :fiber, :storage, :stack_weight, :stack_price])
+    |> validate_required([:name, :calories, :fat, :protein, :carbs, :fiber, :storage, :stack_weight, :stack_price])
   end
 end
